@@ -3,46 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyMate - Focus & Productivity</title>
+    <title>StudyMate - Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>StudyMate</h1>
-        <button id="theme-toggle">??</button>
+        <h1>Welcome to StudyMate</h1>
+        <button id="logout">Logout</button>
     </header>
 
-    <section class="pomodoro">
-        <h2>Pomodoro Timer</h2>
-        <div id="timer">25:00</div>
-        <button id="start-timer">Start</button>
-        <button id="reset-timer">Reset</button>
-    </section>
-
-    <section class="tasks">
-        <h2>Task Manager</h2>
-        <input type="text" id="task-input" placeholder="New Task...">
-        <button id="add-task">Add Task</button>
-        <ul id="task-list"></ul>
-    </section>
-
-    <section class="focus-sounds">
-        <h2>Focus Sounds</h2>
-        <select id="sound-select">
-            <option value="">None</option>
-            <option value="rain.mp3">Rain</option>
-            <option value="white-noise.mp3">White Noise</option>
-        </select>
-        <button id="play-sound">Play</button>
-        <button id="stop-sound">Stop</button>
-    </section>
-
-    <section class="progress">
-        <h2>Progress Tracker</h2>
-        <p>Study Time: <span id="study-time">0</span> minutes</p>
-        <p>Tasks Completed: <span id="tasks-completed">0</span></p>
+    <section class="dashboard">
+        <a href="pomodoro.html" class="feature-card">
+            <h2>Pomodoro Timer</h2>
+            <p>Boost focus with structured study sessions.</p>
+        </a>
+        <a href="tasks.html" class="feature-card">
+            <h2>Task Manager</h2>
+            <p>Organize your study goals efficiently.</p>
+        </a>
+        <a href="sounds.html" class="feature-card">
+            <h2>Focus Sounds</h2>
+            <p>Enhance concentration with background sounds.</p>
+        </a>
+        <a href="progress.html" class="feature-card">
+            <h2>Progress Tracker</h2>
+            <p>Monitor your study progress and achievements.</p>
+        </a>
     </section>
 
     <script src="script.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>
