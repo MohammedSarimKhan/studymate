@@ -128,6 +128,8 @@ function setupProgressTracker() {
 
     document.getElementById("study-time").textContent = studyTime;
     document.getElementById("tasks-completed").textContent = tasksCompleted;
+    <script src="script.js" defer></script>
+
 }               
     });
 }
