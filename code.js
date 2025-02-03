@@ -1,75 +1,133 @@
-// POMODORO TIMER
-let timer;
-let timeLeft = 1500; // 25 minutes
-const timerDisplay = document.getElementById("timer");
-
-document.getElementById("start-timer").addEventListener("click", () => {
-    if (!timer) {
-        timer = setInterval(() => {
-            if (timeLeft > 0) {
-                timeLeft--;
-                updateTimerDisplay();
-            } else {
-                clearInterval(timer);
-                timer = null;
-                alert("Time's up! Take a break.");
-            }
-        }, 1000);
-    }
+// Ensure DOM is loaded before running scripts
+document.addEventListener("DOMContentLoaded", function () {
+    setupNavigation();
+    setupPomodoro();
+    setupTaskManager();
+    setupFocusSounds();
+    setupProgressTracker();
+    setupAuth();
 });
 
-document.getElementById("reset-timer").addEventListener("click", () => {
-    clearInterval(timer);
-    timer = null;
-    timeLeft = 1500;
-    updateTimerDisplay();
-});
-
-function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timerDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+// 🔹 1. NAVIGATION SYSTEM (Handles page links)
+function setupNavigation() {
+    document.querySelectorAll(".feature-card").forEach((card) => {
+        card.addEventListener("click", function () {
+            const feature = this.getAttribute("data-feature");
+            window.location.href = `${feature}.html`;
+        });
+    });
 }
 
-// TASK MANAGER
-document.getElementById("add-task").addEventListener("click", () => {
+// 🔹 2. POMODORO TIMER
+function setupPomodoro() {
+    if (!document.getElementById("timer")) return;
+
+    let timer, timeLeft = 1500; // 25 min default
+    const timerDisplay = document.getElementById("timer");
+    const startButton = document.getElementById("start-timer");
+    const resetButton = document.getElementById("reset-timer");
+
+    function updateTimer() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
+
+    startButton.addEventListener("click", () => {
+        if (!timer) {
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimer();
+                } else {
+                    clearInterval(timer);
+                    timer = null;
+                    alert("Time's up! Take a break.");
+                }
+            }, 1000);
+        }
+    });
+
+    resetButton.addEventListener("click", () => {
+        clearInterval(timer);
+        timer = null;
+        timeLeft = 1500;
+        updateTimer();
+    });
+
+    updateTimer();
+}
+
+// 🔹 3. TASK MANAGER (Add, Remove & Save Tasks)
+function setupTaskManager() {
+    if (!document.getElementById("task-input")) return;
+
     const taskInput = document.getElementById("task-input");
+    const addTaskButton = document.getElementById("add-task");
     const taskList = document.getElementById("task-list");
 
-    if (taskInput.value.trim() !== "") {
-        const taskItem = document.createElement("li");
-        taskItem.innerHTML = `${taskInput.value} <button onclick="removeTask(this)">?</button>`;
-        taskList.appendChild(taskItem);
-        updateProgress();
-        taskInput.value = "";
+    function loadTasks() {
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.forEach((task) => addTask(task));
     }
-});
 
-function removeTask(button) {
-    button.parentElement.remove();
-    updateProgress();
+    function saveTasks() {
+        const tasks = Array.from(document.querySelectorAll("#task-list li")).map((li) => li.textContent.replace("✔", "").trim());
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function addTask(text) {
+        const taskItem = document.createElement("li");
+        taskItem.innerHTML = `${text} <button class="remove-task">✔</button>`;
+        taskItem.querySelector(".remove-task").addEventListener("click", () => {
+            taskItem.remove();
+            saveTasks();
+        });
+        taskList.appendChild(taskItem);
+    }
+
+    addTaskButton.addEventListener("click", () => {
+        if (taskInput.value.trim() !== "") {
+            addTask(taskInput.value);
+            saveTasks();
+            taskInput.value = "";
+        }
+    });
+
+    loadTasks();
 }
 
-// FOCUS SOUNDS
-const soundSelect = document.getElementById("sound-select");
-const audio = new Audio();
+// 🔹 4. FOCUS SOUNDS
+function setupFocusSounds() {
+    if (!document.getElementById("sound-select")) return;
 
-document.getElementById("play-sound").addEventListener("click", () => {
-    audio.src = `sounds/${soundSelect.value}`;
-    audio.loop = true;
-    audio.play();
-});
+    const soundSelect = document.getElementById("sound-select");
+    const playButton = document.getElementById("play-sound");
+    const stopButton = document.getElementById("stop-sound");
+    const audio = new Audio();
 
-document.getElementById("stop-sound").addEventListener("click", () => {
-    audio.pause();
-});
+    playButton.addEventListener("click", () => {
+        if (soundSelect.value) {
+            audio.src = `sounds/${soundSelect.value}`;
+            audio.loop = true;
+            audio.play();
+        }
+    });
 
-// PROGRESS TRACKER
-function updateProgress() {
-    document.getElementById("tasks-completed").textContent = document.getElementById("task-list").children.length;
+    stopButton.addEventListener("click", () => {
+        audio.pause();
+    });
 }
 
-// THEME TOGGLE
-document.getElementById("theme-toggle").addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-});
+// 🔹 5. PROGRESS TRACKER (Save Study Data)
+function setupProgressTracker() {
+    if (!document.getElementById("study-time")) return;
+
+    let studyTime = localStorage.getItem("studyTime") || 0;
+    let tasksCompleted = localStorage.getItem("tasksCompleted") || 0;
+
+    document.getElementById("study-time").textContent = studyTime;
+    document.getElementById("tasks-completed").textContent = tasksCompleted;
+}               
+    });
+}
